@@ -1,0 +1,148 @@
+#+TITLE: C11 - Object Oriented Programming
+#+AUTHOR: Francisco Cerdeira
+#+DESCRIPTION: Summary of Object Oriented Programming with C++
+
+Find it at: [[https://www.learncpp.com/cpp-tutorial/][learncpp - Lesson 11]]
+
+* Class and Class Members
++ Class Calculator
+  - =using number_t = int= defines number_t as an int
+  - Vector =m_resultHistory= is a vector of ints
+  - The function =add= adds two numbers (=a= and =b=)
+    + Pushes the =result= to our vector =resultHistory=
+    + Returns =result=
++ Main
+  - Add 3 and 4
+    + print
+  - Add 99 and 24
+    + print
+  - +This is the weird part... I believe it's a =for= that goes over the vector =m_resultHistory=+
+    + +Don't know why it's written like this+
+  - Ok, so what we are doing is:
+    + We say, in =Calculator= we want the =number_t= function
+      - Remember, that's where =m_resultHistory= is
+    + The "=result=" we want is the history so we name it that
+    + =m_resultHistory= that we want is in =calculator=
+      - Remember once again with what we are doing: math!
+        + Not the class but the thing we constructed with the class!
+          - First line in the main function
+    + Print!
+
+#+begin_src C++ :includes <iostream> <vector>
+class Calculator
+{
+public:
+  using number_t = int; // this is a nested type alias
+
+  std::vector<number_t> m_resultHistory{};
+
+  number_t add(number_t a, number_t b)
+  {
+    auto result{ a + b };
+
+    m_resultHistory.push_back(result);
+
+    return result;
+  }
+};
+
+int main()
+{
+  Calculator calculator{};
+
+  std::cout << calculator.add(3, 4) << '\n'; // 7
+  std::cout << calculator.add(99, 24) << '\n'; // 123
+
+  calculator.add(1, 1);
+
+  for (Calculator::number_t result : calculator.m_resultHistory)
+  {
+    std::cout << result << '\n';
+  }
+
+  return 0;
+}
+#+end_src
+
+#+RESULTS:
+|   7 |
+| 123 |
+|   7 |
+| 123 |
+|   2 |
+
+* Public vs private access specifiers
++ This example is here mostly so we can see that private members can be accessed directly by a function inside a class
+  - That's basically what this lesson was about: who can see who
+
+#+begin_src C++ :includes iostream
+class DateClass { // members are private by default
+    int m_month; // private by default, can only be accessed by other members
+    int m_day; // private by default, can only be accessed by other members
+    int m_year; // private by default, can only be accessed by other members
+
+    public:
+        void setDate( int month, int day, int year ) {
+            m_month = month;
+            m_day = day;
+            m_year = year;
+        }
+
+        void print() {
+            std::cout << m_month << '/' << m_day << '/' << m_year;
+        }
+
+        // Note the addition of this function
+        void copyFrom( const DateClass &d ) {
+            // Note that we can access the private members of d directly
+            m_month = d.m_month;
+            m_day = d.m_day;
+            m_year = d.m_year;
+        }
+};
+
+int main() {
+    DateClass date;
+    date.setDate(10, 14, 2020); // okay, because setDate() is public
+
+    DateClass copy;
+    copy.copyFrom(date); // okay, because copyFrom() is public
+    copy.print();
+    std::cout << '\n';
+
+    return 0;
+}
+#+end_src
+
+#+RESULTS:
+: 10/14/2020
+
+#+begin_src C++ :includes iostream array
+int main(){
+    std::array<int, 4> my_array;
+    my_array[0] = 1;
+    my_array[1] = 2;
+
+    std::cout << my_array[3] << std::endl;
+}
+#+end_src
+
+#+RESULTS:
+: 21864
+
+* Class code and header files
+We recommend the following:
++ For classes used in only one file that aren’t generally reusable, define them directly in the single .cpp file they’re used in.
++ For classes used in multiple files, or intended for general reuse, define them in a .h file that has the same name as the class.
++ Trivial member functions (trivial constructors or destructors, access functions, etc…) can be defined inside the class.
++ Non-trivial member functions should be defined in a .cpp file that has the same name as the class.
+
+Here are a few more recommendations for creating and using header files.
++ Always include header guards (we’ll cover these next lesson).
++ Do not define variables and functions in header files (global constants are an exception -- we’ll cover these later)
++ Give your header files the same name as the source files they’re associated with (e.g. grades.h is paired with grades.cpp).
++ Each header file should have a specific job, and be as independent as possible. For example, you might put all your declarations related to functionality A in A.h and all your declarations related to functionality B in B.h. That way if you only care about A later, you can just include A.h and not get any of the stuff related to B.
++ Be mindful of which headers you need to explicitly include for the functionality that you are using in your code files
++ Every header you write should compile on its own (it should #include every dependency it needs)
++ Only #include what you need (don’t include everything just because you can).
++ Do not #include .cpp files.

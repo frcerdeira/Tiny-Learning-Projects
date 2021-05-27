@@ -1,0 +1,8 @@
+#+TITLE: Readme
+* Introduction
+This repository will serve as a home for small scripts that have no end goal in mind: it's just me learning. It is divided by folders, each one for a specific language. Sometimes I will be following tutorials, Sometimes I will be rewriting some code in a new language.
+* Python
+** Sudoku Solver
+* C++
+** OOP
+Just following along to the tutorial at [[https://www.learncpp.com/][learncpp.com]]. I started with lesson 11 as I had some previous experience with c++.
